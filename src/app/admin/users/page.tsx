@@ -3,6 +3,8 @@ import { Plus, Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import AuthorActions from "@/components/admin/AuthorActions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminAuthorsPage() {
   const supabase = await createClient();
   
