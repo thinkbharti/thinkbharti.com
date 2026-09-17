@@ -5,6 +5,8 @@ import FloatingShare from "@/components/article/FloatingShare";
 import InfiniteArticleFeed from "@/components/article/InfiniteArticleFeed";
 import { createClient } from "@/lib/supabase/server";
 
+import PublicLayout from "@/components/layout/PublicLayout";
+
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();
@@ -47,7 +49,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <>
+    <PublicLayout>
       <ReadingProgressBar />
       
       <main className="min-h-screen bg-gray-50 pb-20 relative">
@@ -61,6 +63,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         {/* The Infinite Feed */}
         <InfiniteArticleFeed initialSlug={articleData.slug} />
       </main>
-    </>
+    </PublicLayout>
   );
 }
