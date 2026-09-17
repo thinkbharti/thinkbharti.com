@@ -15,6 +15,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       id,
       title,
       slug,
+      excerpt,
       content,
       featured_image_url,
       published_at,
@@ -33,6 +34,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const articleData = {
     title: post.title,
     slug: post.slug,
+    excerpt: post.excerpt || "",
     content: post.content || "",
     category: post.categories?.name || "Uncategorized",
     categoryColor: "#E31E24", // Default theme color
@@ -49,7 +51,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <ReadingProgressBar />
       
       <main className="min-h-screen bg-gray-50 pb-20 relative">
-        <FloatingShare url={`https://thinkbharti.com/article/${articleData.slug}`} title={articleData.title} />
+        <FloatingShare />
         
         {/* The Initial Article */}
         <div id={`article-${articleData.slug}`} data-slug={articleData.slug} data-title={articleData.title} className="article-container pt-8 md:pt-12">
@@ -57,7 +59,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         </div>
 
         {/* The Infinite Feed */}
-        <InfiniteArticleFeed currentSlug={articleData.slug} />
+        <InfiniteArticleFeed initialSlug={articleData.slug} />
       </main>
     </>
   );

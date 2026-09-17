@@ -47,11 +47,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               title={article.title}
               excerpt={article.excerpt || ""}
               category={category.name}
-              date={article.published_at ? format(new Date(article.published_at), 'MMM dd, yyyy') : ""}
               readTime="4 min"
               imageUrl={article.featured_image_url || "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80"}
               href={`/article/${article.slug}`}
-              authorName={article.author?.name}
+              author={article.author?.name || "ThinkBharti Editorial"}
             />
           ))}
         </div>

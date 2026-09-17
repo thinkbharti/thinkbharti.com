@@ -2,7 +2,10 @@ import Link from "next/link";
 import { Lock } from "lucide-react";
 import { login } from "../actions";
 
-export default function AdminLogin({ searchParams }: { searchParams?: { error?: string } }) {
+export default async function AdminLogin({ searchParams }: { searchParams?: Promise<{ error?: string }> }) {
+  const params = await searchParams;
+  const error = params?.error;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100">
@@ -15,6 +18,12 @@ export default function AdminLogin({ searchParams }: { searchParams?: { error?: 
             Sign in to manage the ThinkBharti platform.
           </p>
         </div>
+
+        {error && (
+          <div className="p-3 mb-5 text-sm text-red-700 bg-red-50 rounded-lg border border-red-200">
+            {error}
+          </div>
+        )}
 
         <form action={login} className="space-y-5">
           <div>
