@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Heart } from "lucide-react";
 import { FaFacebookF, FaXTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from "react-icons/fa6";
 
@@ -12,13 +13,20 @@ export default function Footer() {
           
           {/* Brand Info */}
           <div className="col-span-1 lg:col-span-1">
-            <div className="inline-flex flex-col items-center mb-4">
-              <Link href="/" className="inline-block text-3xl font-extrabold tracking-tight text-white">
-                Think<span className="text-[#E31E24]">Bharti</span>
-              </Link>
-              <span className="text-gray-400 text-[11px] font-medium tracking-wider mt-1 text-center">
-                News | Ideas | People | Progress
-              </span>
+            <div className="flex flex-col items-center sm:items-start mb-4">
+              <div className="flex flex-col items-center">
+                <Link href="/" className="relative block w-56 h-16 mb-1">
+                  <Image 
+                    src="/logo.webp" 
+                    alt="ThinkBharti Logo" 
+                    fill 
+                    className="object-contain object-center" 
+                  />
+                </Link>
+                <div className="text-gray-400 text-[11px] font-medium tracking-wider text-center">
+                  News | Ideas | People | Progress
+                </div>
+              </div>
             </div>
             <p className="text-sm text-gray-400 mb-6 line-clamp-3">
               Your destination for news, ideas and stories that matter.
