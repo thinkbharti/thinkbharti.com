@@ -4,9 +4,10 @@ import {
   FileText, 
   FolderTree, 
   Users, 
-  Settings,
-  LogOut
+  Settings, 
+  LogOut 
 } from "lucide-react";
+import { signOut } from "@/app/admin/actions";
 
 export default function Sidebar() {
   return (
@@ -46,10 +47,12 @@ export default function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-gray-800">
-        <button className="flex items-center gap-3 px-3 py-2 w-full rounded-md hover:bg-red-900/50 text-gray-400 hover:text-red-400 transition-colors text-sm font-medium">
-          <LogOut size={18} />
-          Sign Out
-        </button>
+        <form action={signOut}>
+          <button type="submit" className="flex items-center gap-3 px-3 py-2 w-full rounded-md hover:bg-red-900/50 text-gray-400 hover:text-red-400 transition-colors text-sm font-medium">
+            <LogOut size={18} />
+            Sign Out
+          </button>
+        </form>
       </div>
     </aside>
   );

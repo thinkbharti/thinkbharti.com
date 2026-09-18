@@ -10,23 +10,32 @@ export default function InfiniteArticleFeed({ initialSlug }: { initialSlug: stri
   const [currentSlug, setCurrentSlug] = useState(initialSlug);
   const loaderRef = useRef<HTMLDivElement>(null);
 
+  const [hasMore, setHasMore] = useState(true);
+
   const fetchNextArticle = useCallback(async () => {
-    if (loading) return;
+    if (loading || !hasMore) return;
     setLoading(true);
     try {
       // Use the last fetched article's slug to avoid immediate duplicates
       const targetSlug = articles.length > 0 ? articles[articles.length - 1].slug : initialSlug;
       const res = await fetch(`/api/articles/next?currentSlug=${targetSlug}`);
-      const data: ArticleData = await res.json();
-      
-      // Add a small divider or "Up Next" toast? Let's just append the article
-      setArticles((prev) => [...prev, data]);
+      if (!res.ok) {
+        setHasMore(false);
+        return;
+      }
+      const data = await res.json();
+      if (data && data.slug) {
+        setArticles((prev) => [...prev, data]);
+      } else {
+        setHasMore(false);
+      }
     } catch (error) {
       console.error("Failed to fetch next article", error);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
-  }, [loading, articles, initialSlug]);
+  }, [loading, hasMore, articles, initialSlug]);
 
   // Observer for loading more articles
   useEffect(() => {
