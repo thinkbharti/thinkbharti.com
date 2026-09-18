@@ -12,10 +12,14 @@ export default function Footer() {
           
           {/* Brand Info */}
           <div className="col-span-1 lg:col-span-1">
-            <Link href="/" className="inline-block text-3xl font-extrabold tracking-tight text-white mb-3">
-              Think<span className="text-[#E31E24]">Bharti</span>
-            </Link>
-            <p className="text-sm text-gray-400 mb-2 font-medium">Ideas. Insights. A Better India.</p>
+            <div className="inline-flex flex-col items-center mb-4">
+              <Link href="/" className="inline-block text-3xl font-extrabold tracking-tight text-white">
+                Think<span className="text-[#E31E24]">Bharti</span>
+              </Link>
+              <span className="text-gray-400 text-[11px] font-medium tracking-wider mt-1 text-center">
+                News | Ideas | People | Progress
+              </span>
+            </div>
             <p className="text-sm text-gray-400 mb-6 line-clamp-3">
               Your destination for news, ideas and stories that matter.
             </p>
