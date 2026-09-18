@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Mail, ArrowUpRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Heart, Mail, ArrowUpRight, ShieldCheck } from "lucide-react";
 import { FaFacebookF, FaXTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from "react-icons/fa6";
 
 export default function Footer() {
@@ -20,7 +20,7 @@ export default function Footer() {
           
           {/* Brand Info (4 cols) */}
           <div className="lg:col-span-4 flex flex-col items-center sm:items-start">
-            <div className="flex flex-col items-center sm:items-start gap-3 mb-5">
+            <div className="mb-5">
               {/* Premium Logo Card */}
               <Link 
                 href="/" 
@@ -33,12 +33,6 @@ export default function Footer() {
                   className="object-contain p-1" 
                 />
               </Link>
-              
-              {/* Tagline */}
-              <div className="inline-flex items-center gap-2 text-[#E31E24] bg-red-950/40 border border-red-900/40 px-3.5 py-1 rounded-full text-xs font-bold tracking-wider">
-                <Sparkles size={12} className="text-amber-400" />
-                <span>News · Ideas · People · Progress</span>
-              </div>
             </div>
 
             <p className="text-sm text-gray-400 leading-relaxed mb-6 text-center sm:text-left max-w-sm">
