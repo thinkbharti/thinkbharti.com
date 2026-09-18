@@ -1,8 +1,17 @@
 import Link from "next/link";
 import { Lock } from "lucide-react";
-import { login } from "../actions";
+import { login } from "@/app/admin/actions";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function AdminLogin({ searchParams }: { searchParams?: Promise<{ error?: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect('/admin');
+  }
+
   const params = await searchParams;
   const error = params?.error;
 
@@ -32,7 +41,7 @@ export default async function AdminLogin({ searchParams }: { searchParams?: Prom
               name="email"
               type="email" 
               placeholder="admin@thinkbharti.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E31E24] focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E31E24] focus:border-transparent text-sm"
               required
             />
           </div>
@@ -45,14 +54,14 @@ export default async function AdminLogin({ searchParams }: { searchParams?: Prom
               name="password"
               type="password" 
               placeholder="••••••••"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E31E24] focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E31E24] focus:border-transparent text-sm"
               required
             />
           </div>
           
           <button 
             type="submit" 
-            className="w-full bg-[#101820] text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md shadow-gray-900/10 mt-2"
+            className="w-full bg-[#101820] text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md shadow-gray-900/10 mt-2 text-sm"
           >
             Sign In
           </button>
