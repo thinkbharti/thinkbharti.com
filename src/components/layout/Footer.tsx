@@ -14,13 +14,13 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="col-span-1 lg:col-span-1">
             <div className="flex flex-col items-center sm:items-start mb-4">
-              <div className="flex flex-col items-center">
-                <Link href="/" className="relative block w-56 h-16 mb-1">
+              <div className="flex flex-col items-center gap-2.5">
+                <Link href="/" className="relative block w-52 h-14 bg-white rounded-xl p-2 shadow-sm hover:shadow-md transition-all">
                   <Image 
                     src="/logo.webp" 
                     alt="ThinkBharti Logo" 
                     fill 
-                    className="object-contain object-center" 
+                    className="object-contain p-1.5" 
                   />
                 </Link>
                 <div className="text-gray-400 text-[11px] font-medium tracking-wider text-center">
