@@ -2,10 +2,43 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { Heart, Mail, ArrowUpRight, ShieldCheck } from "lucide-react";
 import { FaFacebookF, FaXTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from "react-icons/fa6";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+  const [subMessage, setSubMessage] = useState<{ text: string; success: boolean } | null>(null);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    try {
+      setSubscribing(true);
+      setSubMessage(null);
+
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setSubMessage({ text: data.message || "Thank you for subscribing!", success: true });
+        setEmail("");
+      } else {
+        setSubMessage({ text: data.error || "Failed to subscribe.", success: false });
+      }
+    } catch {
+      setSubMessage({ text: "Network error. Please try again.", success: false });
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-[#0c121c] text-gray-300 relative overflow-hidden">
       {/* Top Gradient Highlight Bar */}
@@ -132,10 +165,12 @@ export default function Footer() {
                 Get the top stories, deep dives, and expert perspectives directly in your inbox every morning.
               </p>
               
-              <form className="flex flex-col gap-2.5" onSubmit={(e) => e.preventDefault()}>
+              <form className="flex flex-col gap-2.5" onSubmit={handleSubscribe}>
                 <div className="relative">
                   <input 
                     type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@email.com" 
                     className="w-full bg-black/40 border border-gray-700/80 text-white placeholder-gray-500 px-3.5 py-2.5 rounded-xl focus:outline-none focus:border-[#E31E24] focus:ring-1 focus:ring-[#E31E24] text-xs transition-all"
                     required
@@ -143,12 +178,19 @@ export default function Footer() {
                 </div>
                 <button 
                   type="submit"
-                  className="w-full bg-[#E31E24] hover:bg-red-700 text-white px-4 py-2.5 rounded-xl transition-all font-semibold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-red-900/40 hover:shadow-red-900/60 active:scale-[0.99]"
+                  disabled={subscribing}
+                  className="w-full bg-[#E31E24] hover:bg-red-700 text-white px-4 py-2.5 rounded-xl transition-all font-semibold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-red-900/40 hover:shadow-red-900/60 active:scale-[0.99] disabled:opacity-60"
                 >
-                  <span>Subscribe Now</span>
+                  <span>{subscribing ? "Subscribing..." : "Subscribe Now"}</span>
                   <ArrowUpRight size={14} />
                 </button>
               </form>
+
+              {subMessage && (
+                <div className={`mt-3 p-2 text-xs rounded-lg ${subMessage.success ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/40' : 'bg-red-950/60 text-red-300 border border-red-800/40'}`}>
+                  {subMessage.text}
+                </div>
+              )}
 
               <div className="flex items-center gap-1.5 text-[11px] text-gray-500 mt-3 pt-3 border-t border-white/5">
                 <ShieldCheck size={13} className="text-emerald-500" />

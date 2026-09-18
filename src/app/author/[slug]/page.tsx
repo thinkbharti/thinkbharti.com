@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import PublicLayout from "@/components/layout/PublicLayout";
 import { User } from "lucide-react";
+import { calculateReadTime } from "@/lib/reading-time";
 
 export default async function AuthorProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -84,7 +85,7 @@ export default async function AuthorProfilePage({ params }: { params: Promise<{ 
                     title={article.title}
                     excerpt={article.excerpt || ""}
                     category={article.category?.name || "News"}
-                    readTime="5 min"
+                    readTime={calculateReadTime(article.content)}
                     imageUrl={article.featured_image_url || "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80"}
                     href={`/article/${article.slug}`}
                     author={author.name}

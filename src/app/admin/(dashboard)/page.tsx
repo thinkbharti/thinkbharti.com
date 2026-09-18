@@ -1,93 +1,177 @@
-import { FileText, Eye, FolderTree, TrendingUp } from "lucide-react";
+import { FileText, FolderTree, Users, CheckCircle, Clock, Plus } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { format } from "date-fns";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const supabase = await createClient();
+
+  // Fetch real counts concurrently
+  const [
+    { count: totalPostsCount },
+    { count: publishedPostsCount },
+    { count: draftPostsCount },
+    { count: categoriesCount },
+    { count: authorsCount },
+    { data: recentPosts }
+  ] = await Promise.all([
+    supabase.from("posts").select("*", { count: "exact", head: true }),
+    supabase.from("posts").select("*", { count: "exact", head: true }).eq("status", "published"),
+    supabase.from("posts").select("*", { count: "exact", head: true }).eq("status", "draft"),
+    supabase.from("categories").select("*", { count: "exact", head: true }),
+    supabase.from("authors").select("*", { count: "exact", head: true }),
+    supabase.from("posts")
+      .select(`
+        id,
+        title,
+        status,
+        published_at,
+        created_at,
+        category:category_id (name)
+      `)
+      .order("created_at", { ascending: false })
+      .limit(6)
+  ]);
+
   return (
-    <div className="max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Overview</h2>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Page Header with Action Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Admin Dashboard</h2>
+          <p className="text-sm text-gray-500 mt-0.5">Real-time metrics and publishing control center.</p>
+        </div>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/posts/new"
+            className="inline-flex items-center gap-2 bg-[#E31E24] hover:bg-red-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm shadow-red-900/20"
+          >
+            <Plus size={16} />
+            <span>New Article</span>
+          </Link>
+        </div>
+      </div>
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Total Articles</p>
-              <h3 className="text-3xl font-bold text-gray-900">124</h3>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Total Articles</p>
+              <h3 className="text-3xl font-extrabold text-gray-900">{totalPostsCount || 0}</h3>
             </div>
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
-              <FileText size={24} />
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+              <FileText size={22} />
             </div>
           </div>
-          <p className="text-xs text-green-600 mt-4 flex items-center font-medium">
-            <TrendingUp size={14} className="mr-1" /> +12 this month
-          </p>
+          <div className="text-xs text-gray-500 mt-4 flex items-center gap-2">
+            <span className="font-semibold text-emerald-600 flex items-center">
+              <CheckCircle size={13} className="mr-1" /> {publishedPostsCount || 0} Published
+            </span>
+            <span>•</span>
+            <span className="text-amber-600">{draftPostsCount || 0} Drafts</span>
+          </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Total Views</p>
-              <h3 className="text-3xl font-bold text-gray-900">45.2K</h3>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Published</p>
+              <h3 className="text-3xl font-extrabold text-emerald-600">{publishedPostsCount || 0}</h3>
             </div>
-            <div className="p-3 bg-red-50 text-red-600 rounded-lg">
-              <Eye size={24} />
+            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+              <CheckCircle size={22} />
             </div>
           </div>
-          <p className="text-xs text-green-600 mt-4 flex items-center font-medium">
-            <TrendingUp size={14} className="mr-1" /> +18% this month
-          </p>
+          <p className="text-xs text-gray-400 mt-4">Live on website</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Categories</p>
-              <h3 className="text-3xl font-bold text-gray-900">8</h3>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Categories</p>
+              <h3 className="text-3xl font-extrabold text-gray-900">{categoriesCount || 0}</h3>
             </div>
-            <div className="p-3 bg-green-50 text-green-600 rounded-lg">
-              <FolderTree size={24} />
+            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
+              <FolderTree size={22} />
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-4 font-medium">
-            Active categories
-          </p>
+          <p className="text-xs text-gray-400 mt-4">Active topic sections</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Authors</p>
+              <h3 className="text-3xl font-extrabold text-gray-900">{authorsCount || 0}</h3>
+            </div>
+            <div className="p-3 bg-red-50 text-[#E31E24] rounded-xl">
+              <Users size={22} />
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 mt-4">Active journalists & editors</p>
         </div>
       </div>
 
-      {/* Recent Articles */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Recent Articles</h2>
-          <Link href="/admin/posts" className="text-sm font-medium text-[#E31E24] hover:underline">
-            View all
+      {/* Recent Articles Table */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+          <h3 className="text-lg font-bold text-gray-800">Recent Articles</h3>
+          <Link href="/admin/posts" className="text-xs font-bold text-[#E31E24] hover:underline uppercase tracking-wider">
+            View all articles →
           </Link>
         </div>
         
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+              <tr className="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
                 <th className="p-4">Title</th>
                 <th className="p-4">Category</th>
                 <th className="p-4">Status</th>
                 <th className="p-4">Date</th>
+                <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 text-sm">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <tr key={i} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-4 font-medium text-gray-900">
-                    Example Article Title {i}
+            <tbody className="divide-y divide-gray-100 text-sm">
+              {recentPosts && recentPosts.length > 0 ? (
+                recentPosts.map((post: any) => (
+                  <tr key={post.id} className="hover:bg-gray-50/70 transition-colors">
+                    <td className="p-4 font-semibold text-gray-900 max-w-md truncate">
+                      {post.title}
+                    </td>
+                    <td className="p-4 text-gray-500 text-xs font-medium">
+                      {post.category?.name || "General"}
+                    </td>
+                    <td className="p-4">
+                      <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full ${
+                        post.status === "published" 
+                          ? "bg-emerald-50 text-emerald-700" 
+                          : "bg-amber-50 text-amber-700"
+                      }`}>
+                        {post.status === "published" ? "Published" : "Draft"}
+                      </span>
+                    </td>
+                    <td className="p-4 text-gray-400 text-xs">
+                      {post.created_at ? format(new Date(post.created_at), "MMM dd, yyyy") : "N/A"}
+                    </td>
+                    <td className="p-4 text-right">
+                      <Link
+                        href={`/admin/posts/edit/${post.id}`}
+                        className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                      >
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-gray-400 text-sm">
+                    No articles created yet. Click &ldquo;New Article&rdquo; to publish your first story.
                   </td>
-                  <td className="p-4 text-gray-500">Technology</td>
-                  <td className="p-4">
-                    <span className="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                      Published
-                    </span>
-                  </td>
-                  <td className="p-4 text-gray-500">Aug 28, 2025</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

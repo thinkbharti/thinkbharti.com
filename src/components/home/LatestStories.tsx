@@ -1,7 +1,8 @@
 import Link from "next/link";
 import ArticleCard from "../ui/ArticleCard";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { calculateReadTime } from "@/lib/reading-time";
 
 export default async function LatestStories() {
   const supabase = await createClient();
@@ -13,6 +14,7 @@ export default async function LatestStories() {
       title,
       slug,
       excerpt,
+      content,
       featured_image_url,
       published_at,
       categories (name),
@@ -22,7 +24,6 @@ export default async function LatestStories() {
     .order('published_at', { ascending: false })
     .limit(3);
 
-  // Fallback to empty array if data fetching fails
   const latestStories = posts || [];
 
   return (
@@ -45,11 +46,12 @@ export default async function LatestStories() {
           {latestStories.map((story) => (
             <ArticleCard 
               key={story.id}
+              id={story.id}
               title={story.title}
               excerpt={story.excerpt || ""}
-              category={story.categories?.name || "Uncategorized"}
-              author={story.authors?.name || "ThinkBharti Editorial"}
-              readTime="5 min" // Since we don't calculate this dynamically yet
+              category={(story.categories as any)?.name || "General"}
+              author={(story.authors as any)?.name || "ThinkBharti Editorial"}
+              readTime={calculateReadTime(story.content)}
               imageUrl={story.featured_image_url || "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80"}
               href={`/article/${story.slug}`}
             />

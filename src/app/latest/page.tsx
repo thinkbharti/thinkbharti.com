@@ -1,6 +1,7 @@
 import ArticleCard from "@/components/ui/ArticleCard";
 import { createClient } from "@/lib/supabase/server";
 import PublicLayout from "@/components/layout/PublicLayout";
+import { calculateReadTime } from "@/lib/reading-time";
 
 export const metadata = {
   title: "Latest Stories - ThinkBharti",
@@ -39,7 +40,7 @@ export default async function LatestPage() {
                 title={article.title}
                 excerpt={article.excerpt || ""}
                 category={article.category?.name || "General"}
-                readTime="5 min"
+                readTime={calculateReadTime(article.content)}
                 imageUrl={article.featured_image_url || "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80"}
                 href={`/article/${article.slug}`}
                 author={article.author?.name || "ThinkBharti Editorial"}

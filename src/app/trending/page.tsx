@@ -1,6 +1,7 @@
 import ArticleCard from "@/components/ui/ArticleCard";
 import { createClient } from "@/lib/supabase/server";
 import PublicLayout from "@/components/layout/PublicLayout";
+import { calculateReadTime } from "@/lib/reading-time";
 
 export const metadata = {
   title: "Trending Stories - ThinkBharti",
@@ -45,7 +46,7 @@ export default async function TrendingPage() {
                 excerpt={article.excerpt || ""}
                 category={article.category?.name || "Trending"}
                 categoryColor="#FF5722"
-                readTime="4 min"
+                readTime={calculateReadTime(article.content)}
                 imageUrl={article.featured_image_url || "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=800&q=80"}
                 href={`/article/${article.slug}`}
                 author={article.author?.name || "ThinkBharti Editorial"}

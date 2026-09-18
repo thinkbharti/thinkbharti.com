@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import PublicLayout from "@/components/layout/PublicLayout";
+import { calculateReadTime } from "@/lib/reading-time";
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -49,7 +50,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 title={article.title}
                 excerpt={article.excerpt || ""}
                 category={category.name}
-                readTime="4 min"
+                readTime={calculateReadTime(article.content)}
                 imageUrl={article.featured_image_url || "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80"}
                 href={`/article/${article.slug}`}
                 author={article.author?.name || "ThinkBharti Editorial"}
