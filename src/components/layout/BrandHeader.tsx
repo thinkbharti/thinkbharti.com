@@ -8,17 +8,17 @@ export default function BrandHeader() {
       <div className="container mx-auto flex flex-col lg:flex-row justify-between items-center gap-6">
         
         {/* Logo Section */}
-        <div className="flex flex-col items-center lg:items-start shrink-0">
+        <div className="flex flex-col items-center shrink-0">
           <Link href="/" className="relative block w-64 h-20 mb-1">
             <Image 
               src="/logo.webp" 
               alt="ThinkBharti Logo" 
               fill 
-              className="object-contain object-left" 
+              className="object-contain object-center" 
               priority 
             />
           </Link>
-          <div className="text-gray-500 text-xs font-medium tracking-wide ml-1">
+          <div className="text-gray-500 text-xs font-medium tracking-wide text-center">
             News | Ideas | People | Progress
           </div>
         </div>
